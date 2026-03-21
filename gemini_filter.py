@@ -1,9 +1,8 @@
-import google.generativeai as genai
+from google import genai
 import json
 import os
 
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-model = genai.GenerativeModel("gemini-1.5-flash")
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 EXTRACT_PROMPT = """
 You are a job listing extractor. Read the LinkedIn post text below and extract any job openings mentioned.
@@ -31,25 +30,19 @@ Post text:
 
 
 def extract_jobs_from_post(post_text: str) -> list[dict]:
-    """
-    Sends post text to Gemini and returns a list of structured job dicts.
-    """
     try:
-        response = model.generate_content(
-            EXTRACT_PROMPT.format(text=post_text[:3000])
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=EXTRACT_PROMPT.format(text=post_text[:3000])
         )
         raw = response.text.strip()
-
-        # Strip markdown code fences if Gemini adds them anyway
         raw = raw.replace("```json", "").replace("```", "").strip()
-
         result = json.loads(raw)
         if isinstance(result, list):
             return result
         return []
-
     except json.JSONDecodeError as e:
-        print(f"  [!] JSON parse error: {e} | Raw response: {raw[:200]}")
+        print(f"  [!] JSON parse error: {e} | Raw: {raw[:200]}")
         return []
     except Exception as e:
         print(f"  [!] Gemini error: {e}")
@@ -57,23 +50,35 @@ def extract_jobs_from_post(post_text: str) -> list[dict]:
 
 
 def filter_posts(posts: list[dict]) -> list[dict]:
-    """
-    Iterates over all scraped posts, runs Gemini on each,
-    and returns a flat list of all extracted jobs.
-    """
     all_jobs = []
-
     for i, post in enumerate(posts):
         content = post.get("content", "").strip()
         if len(content) < 50:
             continue
-
         print(f"  Extracting jobs from post {i+1}/{len(posts)}...")
         jobs = extract_jobs_from_post(content)
-
         for job in jobs:
             job["source_url"] = post.get("url", "")
             all_jobs.append(job)
-
     print(f"  Total jobs extracted: {len(all_jobs)}")
     return all_jobs
+```
+
+5. Click **Commit changes**
+
+---
+
+## Update `scraper.py` on GitHub
+
+Same process — edit and replace with the DuckDuckGo version from the downloaded file above.
+
+---
+
+## Update `requirements.txt` on GitHub
+
+Replace contents with just these 4 lines:
+```
+duckduckgo-search
+google-genai
+gspread
+google-auth
