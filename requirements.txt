@@ -1,4 +1,4 @@
-duckduckgo-search
+ddgs
 google-genai
 gspread
 google-auth
