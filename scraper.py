@@ -3,8 +3,8 @@ import time
 import random
 
 SEARCH_QUERIES = [
-    "hiring founder's office bangalore linkedin",
-    "hiring founder's office delhi linkedin",
+    "hiring founders office bangalore linkedin",
+    "hiring founders office delhi linkedin",
     "hiring chief of staff india startup linkedin",
     "hiring growth manager india startup linkedin",
     "founder office intern india linkedin",
@@ -32,7 +32,6 @@ def scrape_all() -> list[dict]:
                 url = r.get("href", "")
                 snippet = r.get("body", "").strip()
 
-                # Accept both LinkedIn posts and LinkedIn job pages
                 if "linkedin.com" not in url:
                     continue
                 if len(snippet) < 40:
@@ -49,11 +48,3 @@ def scrape_all() -> list[dict]:
 
     print(f"  Total unique posts found: {len(all_posts)}")
     return all_posts
-```
-
-And update `requirements.txt` — swap `duckduckgo-search` for `ddgs`:
-```
-ddgs
-google-genai
-gspread
-google-auth
