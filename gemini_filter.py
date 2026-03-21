@@ -1,6 +1,7 @@
 from google import genai
 import json
 import os
+import time
 
 client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
@@ -60,5 +61,7 @@ def filter_posts(posts: list[dict]) -> list[dict]:
         for job in jobs:
             job["source_url"] = post.get("url", "")
             all_jobs.append(job)
+        # Stay within free tier rate limit (15 RPM)
+        time.sleep(4)
     print(f"  Total jobs extracted: {len(all_jobs)}")
     return all_jobs
