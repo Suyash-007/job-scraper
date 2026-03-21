@@ -62,23 +62,3 @@ def filter_posts(posts: list[dict]) -> list[dict]:
             all_jobs.append(job)
     print(f"  Total jobs extracted: {len(all_jobs)}")
     return all_jobs
-```
-
-5. Click **Commit changes**
-
----
-
-## Update `scraper.py` on GitHub
-
-Same process — edit and replace with the DuckDuckGo version from the downloaded file above.
-
----
-
-## Update `requirements.txt` on GitHub
-
-Replace contents with just these 4 lines:
-```
-duckduckgo-search
-google-genai
-gspread
-google-auth
