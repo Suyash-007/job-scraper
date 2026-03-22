@@ -8,12 +8,23 @@ SERPER_API_KEY = os.environ["SERPER_API_KEY"]
 SEARCH_QUERIES = [
     "site:linkedin.com/posts hiring founders office bangalore",
     "site:linkedin.com/posts hiring founders office delhi",
+    "site:linkedin.com/posts hiring founders office mumbai",
+    "site:linkedin.com/posts hiring founders office hyderabad",
+    "site:linkedin.com/posts hiring founders office gurgaon",
+    "site:linkedin.com/posts hiring founders office pune",
     "site:linkedin.com/posts hiring chief of staff india startup",
+    "site:linkedin.com/posts chief of staff india hiring",
     "site:linkedin.com/posts hiring growth manager india startup",
-    "site:linkedin.com/posts founder office intern india",
-    "site:linkedin.com/posts hiring EIR india startup",
+    "site:linkedin.com/posts hiring growth lead india startup",
     "site:linkedin.com/posts hiring strategy ops india startup",
+    "site:linkedin.com/posts hiring business operations india startup",
+    "site:linkedin.com/posts hiring special projects india startup",
+    "site:linkedin.com/posts hiring EIR india startup",
+    "site:linkedin.com/posts entrepreneur in residence india",
+    "site:linkedin.com/posts founder office intern india",
+    "site:linkedin.com/posts founders office intern india stipend",
     "site:linkedin.com/posts hiring category manager india startup",
+    "site:linkedin.com/posts hiring program manager india startup",
 ]
 
 
@@ -24,7 +35,13 @@ def search_posts(query: str) -> list[dict]:
             "X-API-KEY": SERPER_API_KEY,
             "Content-Type": "application/json"
         },
-        json={"q": query, "num": 20, "gl": "in", "hl": "en"},
+        json={
+            "q": query,
+            "num": 10,
+            "gl": "in",
+            "hl": "en",
+            "tbs": "qdr:d"
+        },
         timeout=15
     )
     response.raise_for_status()
@@ -34,11 +51,16 @@ def search_posts(query: str) -> list[dict]:
     for result in data.get("organic", []):
         url = result.get("link", "")
         snippet = result.get("snippet", "").strip()
+        title = result.get("title", "").strip()
         if "linkedin.com" not in url:
             continue
         if len(snippet) < 40:
             continue
-        posts.append({"url": url, "content": snippet})
+        posts.append({
+            "url": url,
+            "content": snippet,
+            "title": title
+        })
         print(f"    Found: {url[:80]}")
     return posts
 
