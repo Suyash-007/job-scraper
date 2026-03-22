@@ -33,7 +33,7 @@ Post text:
 def extract_jobs_from_post(post_text: str) -> list[dict]:
     try:
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-2.0-flash-lite",
             contents=EXTRACT_PROMPT.format(text=post_text[:3000])
         )
         raw = response.text.strip()
